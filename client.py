@@ -6,14 +6,13 @@ import random
 
 app = Flask(__name__)
 
-# HUB_AUTHKEY = '1234567890'
-# HUB_URL = 'http://localhost:5555'
+#HUB_AUTHKEY = '1234567890'
+#HUB_URL = 'http://localhost:5555'
 HUB_AUTHKEY = 'Crr-K3d-2N'
 HUB_URL = 'https://temporary-server.de'
 
 CHANNELS = None
 LAST_CHANNEL_UPDATE = None
-RANDOM_NUMBER = random.randint(0, 100)
 
 
 def update_channels():
@@ -60,6 +59,7 @@ def show_channel():
 
 @app.route('/post', methods=['POST'])
 def post_message():
+    global RANDOM_NUMBER
     post_channel = request.form['channel']
     if not post_channel:
         return "No channel specified", 400
@@ -78,30 +78,44 @@ def post_message():
         guessed_number = int(request.form['number'])
     except ValueError:
         return "Number must be an integer", 400
-
+    
     # Compare the guessed number to the random number
     if guessed_number == RANDOM_NUMBER:
-        message = "Congratulations! You guessed the number!"
-        guessed = True
-    elif guessed_number < RANDOM_NUMBER:
-        message = "The number is higher. Guess again!"
-        guessed = False
-    else:
-        message = "The number is lower. Guess again!"
-        guessed = False
-
-    # Post the guessed number to the channel's endpoint
-    message_timestamp = datetime.datetime.now().isoformat()
-    response = requests.post(channel['endpoint'],
+        print("we are in correct")
+        message = "Congratulations! You guessed the number! The number was " + str(RANDOM_NUMBER) + ". Do you want to play again? Just guess again!"
+        print("this is message: ", message)
+        message_timestamp = datetime.datetime.now().isoformat()
+        response = requests.post(channel['endpoint'],
                              headers={'Authorization': 'authkey ' + channel['authkey']},
-                             json={'number': guessed_number, 'timestamp': message_timestamp})
-    if response.status_code != 200:
-        return "Error posting message: "+str(response.text), 400
+                             json={'guess': guessed_number, 'timestamp': message_timestamp, 'response': message})
+        if response.status_code != 200:
+            return "Error posting message: "+str(response.text), 400
+        RANDOM_NUMBER = random.randint(0, 100)
+    elif guessed_number < RANDOM_NUMBER:
+        print("we are in lower")
+        message = "The number is higher than "+ str(guessed_number) + ". Guess again!"
+        print("this is message: ", message)
+        message_timestamp = datetime.datetime.now().isoformat()
+        response = requests.post(channel['endpoint'],
+                             headers={'Authorization': 'authkey ' + channel['authkey']},
+                             json={'guess': guessed_number, 'timestamp': message_timestamp, 'response': message})
+        if response.status_code != 200:
+            return "Error posting message: "+str(response.text), 400
+    else:
+        print("we are in higher")
+        message = "The number is lower than "+ str(guessed_number) + ". Guess again!"
+        message_timestamp = datetime.datetime.now().isoformat()
+        response = requests.post(channel['endpoint'],
+                             headers={'Authorization': 'authkey ' + channel['authkey']},
+                             json={'guess': guessed_number, 'timestamp': message_timestamp, 'response': message})
+        if response.status_code != 200:
+            return "Error posting message: "+str(response.text), 400
 
     # Redirect to show the result and allow for further guessing if necessary
-    return render_template("result.html", message=message, guessed=guessed, channel=channel)
+    return redirect(url_for('show_channel')+'?channel='+urllib.parse.quote(post_channel))
 
 
 # Start development web server
 if __name__ == '__main__':
+    RANDOM_NUMBER = random.randint(0, 100)
     app.run(port=5005, debug=True)

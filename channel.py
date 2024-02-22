@@ -20,6 +20,8 @@ app.app_context().push()  # create an app context before initializing db
 
 HUB_URL = 'https://temporary-server.de' # 'http://localhost:5555'
 HUB_AUTHKEY = 'Crr-K3d-2N' # '1234567890'
+#HUB_URL = 'http://localhost:5555'
+#HUB_AUTHKEY = '1234567890'
 CHANNEL_AUTHKEY = '0987654321'
 CHANNEL_NAME = "Number Guessing"
 # CHANNEL_ENDPOINT = "http://vm455.rz.uni-osnabrueck.de/user064/channel.wsgi" # http://localhost:5001" # don't forget to adjust in the bottom of the file
@@ -71,19 +73,20 @@ def post_number():
     if not check_authorization(request):
         return "Invalid authorization", 400
     data = request.json
-    if 'number' not in data:
+    if 'guess' not in data:
         return "No number provided", 400
 
     # Convert number to integer
     try:
-        number = int(data['number'])
+        number = int(data['guess'])
+        response = data['response']
     except ValueError:
         return "Number must be an integer", 400
 
     # Add number to messages
     messages = read_messages()
     timestamp = datetime.datetime.now().isoformat()
-    messages.append({'number': number, 'timestamp': timestamp})
+    messages.append({'guess': number, 'timestamp': timestamp, 'response': response})
     save_messages(messages)
     return "OK", 200
 
