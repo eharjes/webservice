@@ -22,14 +22,14 @@ app.app_context().push()  # create an app context before initializing db
 CHANNEL_AUTHKEY = '0987654321' # SERVER_AUTHKEY = 'Crr-K3d-2N'
 CHANNEL_NAME = "The One and Only Channel"
 # CHANNEL_ENDPOINT = "http://localhost:5001" # don't forget to adjust in the bottom of the file
-# CHANNEL_FILE = 'messages.json'
+CHANNEL_FILE = 'messages.json'
 
 HUB_URL = 'https://temporary-server.de'
 HUB_AUTHKEY = 'Crr-K3d-2N'
 
 @app.cli.command('register')
 def register_command():
-    global CHANNEL_AUTHKEY, CHANNEL_NAME, CHANNEL_ENDPOINT
+    global CHANNEL_AUTHKEY, CHANNEL_NAME
 
     # send a POST request to server /channels
     response = requests.post(HUB_URL + '/channels', headers={'Authorization': 'authkey ' + HUB_AUTHKEY},
