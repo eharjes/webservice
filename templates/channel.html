@@ -18,7 +18,7 @@
     <h1>Channel not found</h1>
 {% endif %}
 
-<form action="post" method="post">
+<form action="/post" method="post">
     Number: <input type="number" name="number" id="number"> <br>
     <input type="hidden" name="channel" value="{{ channel.endpoint | urlencode }}">
     <input type="submit" value="Post">
