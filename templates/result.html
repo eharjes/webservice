@@ -1,0 +1,21 @@
+<!-- result.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Guess Result</title>
+</head>
+<body>
+
+<h1>{{ message }}</h1>
+
+{% if not guessed %}
+<form action="/post" method="post">
+    Try Again: <input type="number" name="number" id="number"> <br>
+    <input type="hidden" name="channel" value="{{ channel.endpoint | urlencode }}">
+    <input type="submit" value="Guess">
+</form>
+{% endif %}
+
+</body>
+</html>

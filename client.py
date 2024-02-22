@@ -2,14 +2,18 @@ from flask import Flask, request, render_template, url_for, redirect
 import requests
 import urllib.parse
 import datetime
+import random
 
 app = Flask(__name__)
 
-HUB_AUTHKEY = '1234567890'
-HUB_URL = 'http://localhost:5555'
+# HUB_AUTHKEY = '1234567890'
+# HUB_URL = 'http://localhost:5555'
+HUB_AUTHKEY = 'Crr-K3d-2N'
+HUB_URL = 'https://temporary-server.de'
 
 CHANNELS = None
 LAST_CHANNEL_UPDATE = None
+RANDOM_NUMBER = random.randint(0, 100)
 
 
 def update_channels():
@@ -56,7 +60,6 @@ def show_channel():
 
 @app.route('/post', methods=['POST'])
 def post_message():
-    # send message to channel
     post_channel = request.form['channel']
     if not post_channel:
         return "No channel specified", 400
@@ -67,15 +70,36 @@ def post_message():
             break
     if not channel:
         return "Channel not found", 404
-    message_content = request.form['content']
-    message_sender = request.form['sender']
+
+    # Retrieve and validate the guessed number
+    if 'number' not in request.form:
+        return "No number provided", 400
+    try:
+        guessed_number = int(request.form['number'])
+    except ValueError:
+        return "Number must be an integer", 400
+
+    # Compare the guessed number to the random number
+    if guessed_number == RANDOM_NUMBER:
+        message = "Congratulations! You guessed the number!"
+        guessed = True
+    elif guessed_number < RANDOM_NUMBER:
+        message = "The number is higher. Guess again!"
+        guessed = False
+    else:
+        message = "The number is lower. Guess again!"
+        guessed = False
+
+    # Post the guessed number to the channel's endpoint
     message_timestamp = datetime.datetime.now().isoformat()
     response = requests.post(channel['endpoint'],
                              headers={'Authorization': 'authkey ' + channel['authkey']},
-                             json={'content': message_content, 'sender': message_sender, 'timestamp': message_timestamp})
+                             json={'number': guessed_number, 'timestamp': message_timestamp})
     if response.status_code != 200:
         return "Error posting message: "+str(response.text), 400
-    return redirect(url_for('show_channel')+'?channel='+urllib.parse.quote(post_channel))
+
+    # Redirect to show the result and allow for further guessing if necessary
+    return render_template("result.html", message=message, guessed=guessed, channel=channel)
 
 
 # Start development web server
