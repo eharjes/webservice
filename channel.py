@@ -17,12 +17,15 @@ app = Flask(__name__)
 app.config.from_object(__name__ + '.ConfigClass')  # configuration
 app.app_context().push()  # create an app context before initializing db
 
-HUB_URL = 'http://localhost:5555' # "https://temporary-server.de"
-HUB_AUTHKEY = '1234567890'
+# HUB_URL = 'http://localhost:5555' # "https://temporary-server.de"
+# HUB_AUTHKEY = '1234567890'
 CHANNEL_AUTHKEY = '0987654321' # SERVER_AUTHKEY = 'Crr-K3d-2N'
 CHANNEL_NAME = "The One and Only Channel"
-CHANNEL_ENDPOINT = "http://localhost:5001" # don't forget to adjust in the bottom of the file
-CHANNEL_FILE = 'messages.json'
+# CHANNEL_ENDPOINT = "http://localhost:5001" # don't forget to adjust in the bottom of the file
+# CHANNEL_FILE = 'messages.json'
+
+HUB_URL = 'https://temporary-server.de'
+HUB_AUTHKEY = 'Crr-K3d-2N'
 
 @app.cli.command('register')
 def register_command():
@@ -32,7 +35,7 @@ def register_command():
     response = requests.post(HUB_URL + '/channels', headers={'Authorization': 'authkey ' + HUB_AUTHKEY},
                              data=json.dumps({
             "name": CHANNEL_NAME,
-            "endpoint": CHANNEL_ENDPOINT,
+            "endpoint": "http://vm455.rz.uni-osnabrueck.de/user064/channel.wsgi", # CHANNEL_ENDPOINT,
             "authkey": CHANNEL_AUTHKEY}))
 
     if response.status_code != 200:
