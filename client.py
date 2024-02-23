@@ -171,10 +171,32 @@ def post_message():
     else:
         return "No input provided", 400
 
-    # Redirect to show the result and allow for further guessing if necessary
-    # return redirect(url_for('show_channel')+'?channel='+urllib.parse.quote(post_channel))
-    encoded_channel = urllib.parse.quote_plus(post_channel)
-    return redirect(url_for('show_channel', channel=encoded_channel))
+    # After processing the guess
+    return redirect(url_for('show_results', channel=urllib.parse.quote(channel['endpoint'])))
+
+@app.route('/results')
+def show_results():
+    # Get the channel from the query parameter
+    result_channel = request.args.get('channel', None)
+    if not result_channel:
+        return "No channel specified", 400
+
+    channel = None
+    for c in update_channels():
+        if c['endpoint'] == urllib.parse.unquote(result_channel):
+            channel = c
+            break
+
+    if not channel:
+        return "Channel not found", 404
+
+    # Fetch messages for the channel
+    response = requests.get(channel['endpoint'], headers={'Authorization': 'authkey ' + channel['authkey']})
+    if response.status_code != 200:
+        return "Error fetching messages: " + str(response.text), 400
+
+    messages = response.json()
+    return render_template("result.html", channel=channel, messages=messages)
 
 def display_word(word, guessed_letters):
     display = ""
