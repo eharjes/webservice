@@ -128,7 +128,7 @@
             {% endfor %}
         </fieldset>
 
-        <form action="post" method="post">
+        <form action="{{ url_for('post_message') }}" method="post">
             Guess: <input type="number" name="number" id="number"> <br>
             <input type="hidden" name="channel" value="{{ channel.endpoint | urlencode }}">
             <input type="submit" value="Post">
