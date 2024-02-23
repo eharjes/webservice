@@ -35,7 +35,7 @@ def register_command():
     response = requests.post(HUB_URL + '/channels', headers={'Authorization': 'authkey ' + HUB_AUTHKEY},
                              data=json.dumps({
             "name": CHANNEL_NAME,
-            "endpoint": "http://vm455.rz.uni-osnabrueck.de/user064/channel.wsgi",
+            "endpoint": "http://vm455.rz.uni-osnabrueck.de/user064/channel.wsgi", #"http://localhost:5001",
             "authkey": CHANNEL_AUTHKEY}))
 
     if response.status_code != 200:
