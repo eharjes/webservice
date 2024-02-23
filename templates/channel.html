@@ -108,6 +108,12 @@
             background-color: #0a2d11; /* Darker shade on hover */
         }
     </style>
+    <script>
+        // JavaScript to automatically scroll to the bottom
+        window.onload = function() {
+            window.scrollTo(0, document.body.scrollHeight);
+        };
+    </script>
 </head>
 <body>
     <p>The distributed messenger. <a href="{{ url_for('home_page') }}">List of channels.</a></p>
