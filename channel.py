@@ -4,6 +4,7 @@
 from flask import Flask, request, render_template, jsonify
 import json
 import requests
+import datetime
 
 # Class-based application configuration
 class ConfigClass(object):
@@ -17,15 +18,16 @@ app = Flask(__name__)
 app.config.from_object(__name__ + '.ConfigClass')  # configuration
 app.app_context().push()  # create an app context before initializing db
 
-# HUB_URL = 'http://localhost:5555' # "https://temporary-server.de"
-# HUB_AUTHKEY = '1234567890'
-CHANNEL_AUTHKEY = '0987654321' # SERVER_AUTHKEY = 'Crr-K3d-2N'
-CHANNEL_NAME = "The One and Only Channel"
-# CHANNEL_ENDPOINT = "http://localhost:5001" # don't forget to adjust in the bottom of the file
-# CHANNEL_FILE = 'messages.json'
-
-HUB_URL = 'https://temporary-server.de'
+HUB_URL = 'https://temporary-server.de' 
 HUB_AUTHKEY = 'Crr-K3d-2N'
+# HUB_URL = 'http://localhost:5555'
+# HUB_AUTHKEY = '1234567890'
+CHANNEL_AUTHKEY = '0987654321'
+CHANNEL_NAME = "Number Guessing"
+CHANNEL_ENDPOINT = "http://vm455.rz.uni-osnabrueck.de/user064/channel.wsgi"
+# CHANNEL_ENDPOINT = "http://localhost:5001" # don't forget to adjust in the bottom of the file
+
+CHANNEL_FILE = 'messages.json'
 
 @app.cli.command('register')
 def register_command():
@@ -35,7 +37,7 @@ def register_command():
     response = requests.post(HUB_URL + '/channels', headers={'Authorization': 'authkey ' + HUB_AUTHKEY},
                              data=json.dumps({
             "name": CHANNEL_NAME,
-            "endpoint": "http://vm455.rz.uni-osnabrueck.de/user064/channel.wsgi", # CHANNEL_ENDPOINT,
+            "endpoint": CHANNEL_ENDPOINT, # "http://localhost:5001",
             "authkey": CHANNEL_AUTHKEY}))
 
     if response.status_code != 200:
@@ -69,39 +71,33 @@ def home_page():
 
 # POST: Send a message
 @app.route('/', methods=['POST'])
-def send_message():
-    # fetch channels from server
-    # check authorization header
+def post_number():
     if not check_authorization(request):
         return "Invalid authorization", 400
-    # check if message is present
-    message = request.json
-    if not message:
-        return "No message", 400
-    if not 'content' in message:
-        return "No content", 400
-    if not 'sender' in message:
-        return "No sender", 400
-    if not 'timestamp' in message:
-        return "No timestamp", 400
-    # add message to messages
+    data = request.json
+    if 'guess' not in data:
+        return "No number provided", 400
+
+    # Convert number to integer
+    try:
+        number = int(data['guess'])
+        response = data['response']
+    except ValueError:
+        return "Number must be an integer", 400
+
+    # Add number to messages
     messages = read_messages()
-    messages.append({'content':message['content'], 'sender':message['sender'], 'timestamp':message['timestamp']})
+    timestamp = datetime.datetime.now().isoformat()
+    messages.append({'guess': number, 'timestamp': timestamp, 'response': response})
     save_messages(messages)
     return "OK", 200
 
 def read_messages():
-    global CHANNEL_FILE
     try:
-        f = open(CHANNEL_FILE, 'r')
-    except FileNotFoundError:
+        with open(CHANNEL_FILE, 'r') as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
         return []
-    try:
-        messages = json.load(f)
-    except json.decoder.JSONDecodeError:
-        messages = []
-    f.close()
-    return messages
 
 def save_messages(messages):
     global CHANNEL_FILE

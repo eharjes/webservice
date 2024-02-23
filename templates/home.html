@@ -2,17 +2,71 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>List of channels</title>
+    <title>Enchanted Channel Directory</title>
+    <style>
+        body {
+            background-color: #f0fff0; /* Subtle greenish background */
+            font-family: 'Verdana', sans-serif;
+            color: #2e8b57; /* Dark green text */
+            margin: 20px;
+        }
+
+        h1 {
+            color: #228b22; /* Forest green heading */
+        }
+
+        p {
+            font-style: italic;
+            color: #556b2f; /* Olive paragraph text */
+        }
+
+        .channel-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .channel-box {
+            border: 2px solid #228b22; /* Border color matches heading */
+            border-radius: 10px; /* Rounded corners */
+            padding: 10px;
+            width: 200px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        a {
+            text-decoration: none;
+            color: #006400; /* Dark green link */
+        }
+
+        a:hover {
+            color: #8fbc8f; /* Light green on hover */
+        }
+    </style>
 </head>
 <body>
 
-<h1>List of message channels</h1>
+<h1>Enchanting Channels</h1>
+<p>Welcome to the mystical realm of message channels!</p>
 
-<ul>
+<div class="channel-container">
     {% for channel in channels %}
-        <li><a href="{{ url_for('show_channel') }}?channel={{ channel.endpoint | urlencode }}">{{ channel.name }}</a></li>
+        <div class="channel-box">
+            <ul>
+                <li><a href="{{ url_for('show_channel') }}?channel={{ channel.endpoint | urlencode }}">{{ channel.name }}</a></li>
+            </ul>
+        </div>
     {% endfor %}
-</ul>
+</div>
 
 </body>
 </html>

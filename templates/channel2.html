@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Channel: {{ channel.name }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f0fff0; /* Subtle greenish background */
+
+        }
+
+        h1, h2 {
+            color: #007BFF;
+        }
+
+        p {
+            margin-bottom: 10px;
+        }
+
+        a {
+            text-decoration: none;
+            color: #007BFF;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #6c757d;
+        }
+
+        input[type="text"], input[type="submit"] {
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #6c757d;
+            border-radius: 4px;
+            color: #195b27; /* Dark green for text */
+        }
+
+        input[type="submit"] {
+            background-color: #355E3B;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0a2d11; /* Darker shade on hover */
+        }
+
+        .message {
+            margin-bottom: 20px;
+        }
+
+        .sender {
+            font-size: 18px;
+            font-weight: bold;
+            color: #234d20; /* Darker green for sender */
+        }
+
+        .content {
+            font-size: 16px;
+            color: #228B22; /* Dark green for content */
+        }
+
+        .timestamp {
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        hr {
+            margin-top: 30px;
+            margin-bottom: 30px;
+            border: 0;
+            border-top: 1px solid #6c757d;
+        }
+
+        fieldset {
+            border: 1px solid #6c757d;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        legend {
+            font-size: 20px;
+            color: #355E3B; /* Color added to the legend */
+            font-weight: bold;
+        }
+
+        .guess-number-button {
+            background-color: #355E3B;
+            color: #fff;
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            position: absolute;
+            bottom: 100px;
+            right: 50px;
+        }
+
+        .guess-number-button:hover {
+            background-color: #0a2d11; /* Darker shade on hover */
+        }
+    </style>
+</head>
+<body>
+    <p>The distributed messenger. <a href="{{ url_for('home_page') }}">List of channels.</a></p>
+    {% if channel %}
+        <h1 style="color: #000;">Channel: {{ channel.name }}</h1>
+        <p> Try to guess the word!</p>
+
+        <fieldset>
+            <legend>Messages</legend>
+            {% for message in messages %}
+                <div class="message">
+                    <div class="sender">Guess: {{ message.guess }}</div>
+                    <br>
+                    <div class="content">Bot Response: {{ message.response }}</div>
+                    <br>
+                    <div class="content">Guessed letters: {{ message.guesses }}</div>
+                    <br>
+                    <div class="content">The target word: {{ message.word }}</div>
+                    <br>
+                    <div class="content">Remaining lives: {{ message.lives }}</div>
+                    <br>
+                    <div class="timestamp">{{ message.timestamp }}</div>
+                </div>
+            {% endfor %}
+        </fieldset>
+
+        <form action="post" method="post">
+            Guess: <input type="letter" name="letter" id="letter"> <br>
+            <input type="hidden" name="channel" value="{{ channel.endpoint | urlencode }}">
+            <input type="submit" value="Post">
+        </form>
+    {% else %}
+        <h1>Channel not found</h1>
+    {% endif %}
+
+</body>
+</html>
