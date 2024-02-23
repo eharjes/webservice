@@ -172,7 +172,9 @@ def post_message():
         return "No input provided", 400
 
     # Redirect to show the result and allow for further guessing if necessary
-    return redirect(url_for('show_channel')+'?channel='+urllib.parse.quote(post_channel))
+    # return redirect(url_for('show_channel')+'?channel='+urllib.parse.quote(post_channel))
+    encoded_channel = urllib.parse.quote_plus(post_channel)
+    return redirect(url_for('show_channel', channel=encoded_channel))
 
 def display_word(word, guessed_letters):
     display = ""
