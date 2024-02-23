@@ -62,7 +62,7 @@
     {% for channel in channels %}
         <div class="channel-box">
             <ul>
-                <li><a href="/show?channel={{ channel.endpoint | urlencode }}">{{ channel.name }}</a></li>
+                <li><a href="{{ url_for('show_channel') }}?channel={{ channel.endpoint | urlencode }}">{{ channel.name }}</a></li>
             </ul>
         </div>
     {% endfor %}

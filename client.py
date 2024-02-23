@@ -54,11 +54,12 @@ def show_channel():
     if response.status_code != 200:
         return "Error fetching messages: "+str(response.text), 400
     messages = response.json()
-    print("this is channel name: ", channel['name'])
     if channel['name'] == "Number Guessing":
         return render_template("channel.html", channel=channel, messages=messages)
-    if channel['name'] == "Hangman":
+    elif channel['name'] == "Hangman":
         return render_template("channel2.html", channel=channel, messages=messages)
+    else:
+        return render_template("channel.html", channel=channel, messages=messages)
 
 
 @app.route('/post', methods=['POST'])
