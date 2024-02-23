@@ -6,8 +6,8 @@ import random
 
 app = Flask(__name__)
 
-#HUB_AUTHKEY = '1234567890'
-#HUB_URL = 'http://localhost:5555'
+# HUB_AUTHKEY = '1234567890'
+# HUB_URL = 'http://localhost:5555'
 HUB_AUTHKEY = 'Crr-K3d-2N'
 HUB_URL = 'https://temporary-server.de'
 
