@@ -26,7 +26,6 @@ CHANNEL_AUTHKEY = '0987654321'
 CHANNEL_NAME = "Number Guessing"
 CHANNEL_ENDPOINT = "http://vm455.rz.uni-osnabrueck.de/user064/channel.wsgi"
 # CHANNEL_ENDPOINT = "http://localhost:5001" # don't forget to adjust in the bottom of the file
-
 CHANNEL_FILE = 'messages.json'
 
 @app.cli.command('register')

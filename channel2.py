@@ -20,8 +20,8 @@ app.app_context().push()  # create an app context before initializing db
 
 HUB_URL = 'https://temporary-server.de'
 HUB_AUTHKEY = 'Crr-K3d-2N' 
-#HUB_URL = 'http://localhost:5555'
-#HUB_AUTHKEY = '1234567890'
+# HUB_URL = 'http://localhost:5555'
+# HUB_AUTHKEY = '1234567890'
 CHANNEL_AUTHKEY = '22334455'
 CHANNEL_NAME = "Hangman"
 CHANNEL_ENDPOINT = "http://vm455.rz.uni-osnabrueck.de/user064/channel2.wsgi" 
