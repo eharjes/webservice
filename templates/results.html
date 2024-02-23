@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- ... [head content similar to channel.html] ... -->
+</head>
+<body>
+    <p><a href="{{ url_for('home_page') }}">Back to Channel List</a></p>
+    {% if channel %}
+        <h1>Results for Channel: {{ channel.name }}</h1>
+        <fieldset>
+            <legend>Guess Results</legend>
+            {% for message in messages %}
+                <div class="message">
+                    <div class="sender">Guess: {{ message.guess }}</div>
+                    <br>
+                    <div class="content">Response: {{ message.response }}</div>
+                    <br>
+                    <div class="timestamp">{{ message.timestamp }}</div>
+                </div>
+            {% endfor %}
+        </fieldset>
+        <!-- ... [additional content if needed] ... -->
+    {% else %}
+        <h1>Channel not found</h1>
+    {% endif %}
+</body>
+</html>
